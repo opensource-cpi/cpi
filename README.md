@@ -1,5 +1,7 @@
 # CPI Project README
 
+https://opensourcecpi.com
+
 ## Objectives
 
 - Show the price of **restaurant food** over time.
