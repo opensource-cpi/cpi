@@ -35,7 +35,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 14.1 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 14.1 },
+        { ds: "2025-10-06", price: 14.1 },
+      ],
     },
     {
       food: {
@@ -44,7 +47,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 10.95 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 10.95 },
+        { ds: "2025-10-06", price: 10.95 },
+      ],
     },
     {
       food: {
@@ -53,7 +59,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 12.7 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 12.7 },
+        { ds: "2025-10-06", price: 12.7 },
+      ],
     },
     {
       food: {
@@ -62,7 +71,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 12.7 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 12.7 },
+        { ds: "2025-10-06", price: 12.7 },
+      ],
     },
     {
       food: {
@@ -71,7 +83,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 11.7 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 11.7 },
+        { ds: "2025-10-06", price: 11.7 },
+      ],
     },
     {
       food: {
@@ -80,7 +95,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 10.95 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 10.95 },
+        { ds: "2025-10-06", price: 10.95 },
+      ],
     },
     {
       food: {
@@ -89,7 +107,10 @@ const generateFoodPriceData = (): PriceRecord[] => {
         restaurant: "Chipotle",
         type: "entree",
       },
-      weeklyPrices: [{ ds: "2025-09-29", price: 10.95 }],
+      weeklyPrices: [
+        { ds: "2025-09-29", price: 10.95 },
+        { ds: "2025-10-06", price: 10.95 },
+      ],
     },
   ];
 };
@@ -219,6 +240,21 @@ export function PriceTable() {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
+  const groupedData = useMemo(() => {
+    const groups: { restaurant: string; items: typeof sortedData }[] = [];
+    let currentRestaurant = "";
+
+    sortedData.forEach((record) => {
+      if (record.food.restaurant !== currentRestaurant) {
+        currentRestaurant = record.food.restaurant;
+        groups.push({ restaurant: currentRestaurant, items: [] });
+      }
+      groups[groups.length - 1].items.push(record);
+    });
+
+    return groups;
+  }, [sortedData]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 flex-wrap">
@@ -279,40 +315,51 @@ export function PriceTable() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border bg-card">
-                {sortedData.map((record) => (
-                  <tr
-                    key={record.food.food_id}
-                    className="hover:bg-muted/30 transition-colors"
-                  >
-                    <td className="sticky left-0 z-10 bg-card backdrop-blur-sm px-4 py-3 font-medium text-foreground border-r border-border whitespace-nowrap">
-                      {record.food.restaurant}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-foreground whitespace-nowrap">
-                      {record.food.food_name}
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <Badge
-                        variant="outline"
-                        className={`capitalize text-xs ${getTypeColor(
-                          record.food.type
-                        )}`}
-                      >
-                        {record.food.type.replace("_", " ")}
-                      </Badge>
-                    </td>
-                    {record.weeklyPrices.map((priceData, idx) => (
-                      <td
-                        key={idx}
-                        className={`px-4 py-3 font-mono text-sm whitespace-nowrap font-semibold ${getPriceColor(
-                          priceData.price
-                        )}`}
-                      >
-                        ${priceData.price.toFixed(2)}
+              <tbody className="bg-card">
+                {groupedData.map((group) =>
+                  group.items.map((record, itemIdx) => (
+                    <tr
+                      key={record.food.food_id}
+                      className={`hover:bg-muted/30 transition-colors ${
+                        itemIdx === group.items.length - 1
+                          ? "border-b-2 border-border"
+                          : "border-b border-border/50"
+                      }`}
+                    >
+                      {itemIdx === 0 && (
+                        <td
+                          rowSpan={group.items.length}
+                          className="sticky left-0 z-10 bg-card backdrop-blur-sm px-4 py-3 font-medium text-foreground border-r border-border whitespace-nowrap align-middle text-center"
+                        >
+                          {record.food.restaurant}
+                        </td>
+                      )}
+                      <td className="px-4 py-3 text-sm text-foreground whitespace-nowrap">
+                        {record.food.food_name}
                       </td>
-                    ))}
-                  </tr>
-                ))}
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <Badge
+                          variant="outline"
+                          className={`capitalize text-xs ${getTypeColor(
+                            record.food.type
+                          )}`}
+                        >
+                          {record.food.type.replace("_", " ")}
+                        </Badge>
+                      </td>
+                      {record.weeklyPrices.map((priceData, idx) => (
+                        <td
+                          key={idx}
+                          className={`px-4 py-3 font-mono text-sm whitespace-nowrap font-semibold ${getPriceColor(
+                            priceData.price
+                          )}`}
+                        >
+                          ${priceData.price.toFixed(2)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
