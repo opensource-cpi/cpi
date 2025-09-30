@@ -1,34 +1,14 @@
 # CPI Project README
 
-## Main Objective
+## Objectives
 
 - Show the price of **restaurant food** over time.
+- Calculate CPI
+- Predict food prices over time
+- Compare food prices between states
 
-## Tables
-
-### `fct_food`
-
-  - `food_id`
-  - `food_name`
-  - `restaurant`
-  - `type` (enum)
-      - `add_on`
-      - `drink`
-      - `side`
-      - `entree`
-      - `appetizer`
-      - `dessert`
-  - `url`
-  - `element` (how it retrieves the value)
-  - `state`
-  - `ds`
-
-### `hist_food_price`
-
-  - `food id`
-  - `price`
-  - `price_ds` (for consumers \[when the price is\])
-  - `ds` (for devs \[when we pull it\])
+## Prerequisite
+- postgresql@17
 
 ## Data Pipeline
 
